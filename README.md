@@ -26,7 +26,6 @@ Antes de executar o script, é necessário preencher as seguintes informações:
 - E-MAIL DE DESTINO: Insira o endereço de e-mail de destino para receber notificações.
 - SUA SENHA: Insira a senha do seu e-mail.
 - SEU LOGIN: Insira o login para acessar o sistema de marcação de ponto.
-- SUA SENHA: Insira a senha para acessar o sistema de marcação de ponto.
 
 Após preencher as informações, execute o script em um ambiente Python com as bibliotecas necessárias instaladas. Ele irá verificar se o dia atual é válido para marcação de ponto e, em caso positivo, realizará a marcação e enviará um e-mail de notificação.
 
