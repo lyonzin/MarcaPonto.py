@@ -1,4 +1,4 @@
-# Script de Marcação de Ponto Automatizada
+# Script de Marcação de Ponto Automatizado
 
 Este script foi desenvolvido em Python para automatizar a marcação de ponto. Ele utiliza a biblioteca `requests` para enviar requisições POST, e `smtplib` para enviar e-mails de notificação. Além disso, verifica se o dia atual é um feriado ou final de semana usando a biblioteca `holidays`.
 
