@@ -20,8 +20,10 @@ def send_email(subject, body, timestamp=None):
         body += f"\nData e hora da marcação: {timestamp}"
 
     message = f"Subject: {subject}\n\n{body}"
-    try:
-        server = smtplib.SMTP_SSL('smtp-mail.outlook.com', 465) # SERVIDOR SMTP MICROSOFT ! 
+        try:
+
+        server = smtplib.SMTP('smtp.office365.com', 587)  # SERVIDOR SMTP MICROSOFT!
+        server.starttls()
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message.encode('utf-8'))
         server.quit()
