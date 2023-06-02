@@ -3,13 +3,41 @@ import datetime
 import holidays
 import random
 import smtplib
+import time
+import os
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def ensure_log_file_exists():
+    """
+    Essa função verifica se o arquivo "pontos.txt" existe.
+    Se o arquivo não existir, ele é criado.
+    """
+    if not os.path.exists("pontos.txt"):
+        with open("pontos.txt", "w") as file:
+            pass
+
+def ensure_current_day_log_file(today):
+    """
+    Essa função garante que o arquivo "pontos.txt" contenha apenas as entradas do dia atual.
+    As entradas de dias anteriores são removidas.
+    """
+    date_str = today.strftime("%Y-%m-%d")
+    with open("pontos.txt", "r") as file:
+        lines = file.readlines()
+    with open("pontos.txt", "w") as file:
+        for line in lines:
+            date, _, _ = line.strip().split(',')
+            # mantém apenas as linhas cuja data corresponde à data atual
+            if date == date_str:
+                file.write(line)
 
 #Enviando Email
 def send_email(subject, body, timestamp=None):
-    sender_email = 'SEU_EMAIL'
-    receiver_email = 'E-MAIL DE DESTINO'
-    password = 'SUA SENHA'
+    sender_email = 'E-MAIL_QUE_VAI_ENVIAR'
+    receiver_email = 'E-MAIL_QUE_VAI_RECEBER'
+    password = 'SENHA_E-MAIL'
 
     msg = MIMEText(body, 'plain', 'utf-8')
     msg['Subject'] = subject
@@ -18,14 +46,13 @@ def send_email(subject, body, timestamp=None):
 
     if timestamp:
         body += f"\nData e hora da marcação: {timestamp}"
-
+        
     message = f"Subject: {subject}\n\n{body}"
-        try:
-
+    try:
         server = smtplib.SMTP('smtp.office365.com', 587)  # SERVIDOR SMTP MICROSOFT!
         server.starttls()
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message.encode('utf-8'))
+        server.sendmail(sender_email, receiver_email, msg.as_string())
         server.quit()
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
@@ -40,9 +67,33 @@ def is_valid_day(today, holidays_br, holidays_global):
 
 #Randomizador de tempo
 def generate_random_time(today, min_time, max_time):
-    return datetime.datetime.combine(today.date(), min_time) + datetime.timedelta(
-        minutes=random.randint(0, (max_time - min_time).seconds // 60)
-    )
+    min_time_delta = datetime.timedelta(hours=min_time.hour, minutes=min_time.minute)
+    max_time_delta = datetime.timedelta(hours=max_time.hour, minutes=max_time.minute)
+    random_minutes = random.randint(0, int((max_time_delta - min_time_delta).total_seconds() // 60))
+    return datetime.datetime.combine(today.date(), min_time) + datetime.timedelta(minutes=random_minutes)
+
+def is_valid_execution_time(current_time, start_time, end_time):
+    current_time_without_ms = datetime.time(current_time.hour, current_time.minute, current_time.second)
+    if start_time <= current_time_without_ms <= end_time:
+        return True
+    return False
+
+#Verifica se uma marcação de ponto já foi registrada no arquivo de registro.
+def check_previous_point(today, point_type):
+    date_str = today.strftime("%Y-%m-%d")
+    with open("pontos.txt", "r") as file:
+        for line in file:
+            date, time, point = line.strip().split(',')
+            if date == date_str and point == point_type:
+                return True
+    return False
+
+#Registra uma marcação de ponto no arquivo de registro
+def record_point(today, time, point_type):
+    date_str = today.strftime("%Y-%m-%d")
+    time_str = time.strftime("%H:%M:%S")
+    with open("pontos.txt", "a") as file:
+        file.write(f"{date_str},{time_str},{point_type}\n")
 
 #Request
 def send_request(url, payload, headers):
@@ -52,37 +103,13 @@ def send_request(url, payload, headers):
 
 #Função Principal onde chamado tudooo
 def main():
-    horario_entrada_min = datetime.time(8, 55)
-    horario_entrada_max = datetime.time(9, 10)
-    horario_saida_almoco_min = datetime.time(12, 0)
-    horario_saida_almoco_max = datetime.time(12, 20)
-    horario_retorno_almoco_min = datetime.time(13, 0)
-    horario_retorno_almoco_max = datetime.time(13, 15)
-    horario_saida_min = datetime.time(18, 0)
-    horario_saida_max = datetime.time(18, 10)
-
-    today = datetime.datetime.today()
-    current_year = today.year
-    holidays_br = holidays.Brazil(years=current_year)
-    holidays_global = holidays.CountryHoliday('BR', years=current_year)
-
-    valid, reason = is_valid_day(today, holidays_br, holidays_global)
-    if not valid:
-        print(reason)
-        send_email('[BOT] - MARCAÇÃO DE PONTO', reason)
-        exit()
-
-    horario_entrada = generate_random_time(today, horario_entrada_min, horario_entrada_max)
-    horario_saida_almoco = generate_random_time(today, horario_saida_almoco_min, horario_saida_almoco_max)
-    horario_retorno_almoco = generate_random_time(today, horario_retorno_almoco_min, horario_retorno_almoco_max)
-    horario_saida = generate_random_time(today, horario_saida_min, horario_saida_max)
-
+    
     url = 'https://cliente.apdata.com.br/everisparceiro/.net/index.ashx/SaveTimmingEvent'
     
     payload = {
     'deviceID': '8001',
-    'userName': 'SEU LOGIN',
-    'password': 'SUA SENHA',
+    'userName': 'LOGIN',
+    'password': 'SENHA',
     'eventType': '1',
     'cracha': '',
     'costCenter': '',
@@ -121,6 +148,63 @@ def main():
         'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
         'Cookie': 'X-Oracle-BMC-LBS-Route=bb089166a4d059141e589f5733aa94f02d71e92b; clockDeviceToken8001=nH6C/qScdsJSxp4tyTbzcGMegpWY8nGrKJ7+ZjgmX3xHmIA=; acceptedRequiredCookies=COOKIEACCEPTED; acceptedOptionalCookies=COOKIEACCEPTED; Aplanguage=0; FIN_COOKIE=true; apdataCookieIsEnabled=none; __zjc7220=5264592017; __z_a=1442784464723815612723815; authenticated=false; SessionID=; dynSID=; ts=; loginOK=false; dashPublicImg=dpi; X-Oracle-BMC-LBS-Realm=1'
     }
+    
+    
+    horario_entrada_min = datetime.time(8, 55)
+    horario_entrada_max = datetime.time(9, 10)
+    horario_saida_almoco_min = datetime.time(12, 0)
+    horario_saida_almoco_max = datetime.time(12, 20)
+    horario_retorno_almoco_min = datetime.time(13, 0)
+    horario_retorno_almoco_max = datetime.time(13, 15)
+    horario_saida_min = datetime.time(18, 0)
+    horario_saida_max = datetime.time(18, 10)
+
+    # Assegura que o arquivo "pontos.txt" existe antes de operações de leitura/escrita
+    ensure_log_file_exists()
+    today = datetime.datetime.today()
+    # Mantém apenas as entradas de ponto do dia atual no arquivo "pontos.txt"
+    ensure_current_day_log_file(today)
+    
+    current_time = datetime.datetime.now().time()
+    current_time_without_ms = datetime.time(current_time.hour, current_time.minute, current_time.second)
+    execution_start_time = datetime.time(8, 55)
+    execution_end_time = datetime.time(18, 10)
+    
+    horario_entrada = generate_random_time(today, horario_entrada_min, horario_entrada_max)
+    horario_saida_almoco = generate_random_time(today, horario_saida_almoco_min, horario_saida_almoco_max)
+    horario_retorno_almoco = generate_random_time(today, horario_retorno_almoco_min, horario_retorno_almoco_max)
+    horario_saida = generate_random_time(today, horario_saida_min, horario_saida_max)
+  
+    if not is_valid_execution_time(current_time_without_ms, execution_start_time, execution_end_time):
+        print(f"O horário atual ({current_time_without_ms}) está fora do intervalo de execução permitido. Encerrando o script.")
+        exit()        
+    current_year = today.year
+    holidays_br = holidays.Brazil(years=current_year)
+    holidays_global = holidays.CountryHoliday('BR', years=current_year)
+
+    valid, reason = is_valid_day(today, holidays_br, holidays_global)
+    if not valid:
+        print(reason)
+        send_email('[BOT] - MARCAÇÃO DE PONTO', reason)
+        exit()
+    
+    # Inicialize uma lista com informações sobre os pontos a serem marcados
+    point_steps = [
+        ("entrada", horario_entrada),
+        ("saida_almoco", horario_saida_almoco),
+        ("retorno_almoco", horario_retorno_almoco),
+        ("saida", horario_saida),
+    ]
+
+    for point_type, random_time in point_steps:
+        if check_previous_point(today, point_type):
+            print(f"Marcação de ponto '{point_type}' já registrada.")
+        else:
+            # Execute a etapa de marcação de ponto e registre no arquivo
+            send_email('[BOT] - MARCAÇÃO DE PONTO', f'Marcação de ponto {point_type}: {random_time}')
+            record_point(today, random_time, point_type)
+            print(f"Marcação de ponto '{point_type}' realizada com sucesso.")
+            time.sleep(2)
 
     response_data = send_request(url, payload, headers)
     
@@ -134,7 +218,6 @@ def main():
     else:
         print('Usuário / Senha inválidos!')
         send_email('[BOT] - MARCAÇÃO DE PONTO', 'Usuário / Senha inválidos!')
-
 
 if __name__ == "__main__":
     main()
