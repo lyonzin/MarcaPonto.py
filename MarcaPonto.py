@@ -148,8 +148,7 @@ def main():
         'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
         'Cookie': 'X-Oracle-BMC-LBS-Route=bb089166a4d059141e589f5733aa94f02d71e92b; clockDeviceToken8001=nH6C/qScdsJSxp4tyTbzcGMegpWY8nGrKJ7+ZjgmX3xHmIA=; acceptedRequiredCookies=COOKIEACCEPTED; acceptedOptionalCookies=COOKIEACCEPTED; Aplanguage=0; FIN_COOKIE=true; apdataCookieIsEnabled=none; __zjc7220=5264592017; __z_a=1442784464723815612723815; authenticated=false; SessionID=; dynSID=; ts=; loginOK=false; dashPublicImg=dpi; X-Oracle-BMC-LBS-Realm=1'
     }
-    
-    
+        
     horario_entrada_min = datetime.time(8, 55)
     horario_entrada_max = datetime.time(9, 10)
     horario_saida_almoco_min = datetime.time(12, 0)
