@@ -2,7 +2,7 @@
 
 Este script foi desenvolvido em Python para automatizar a marcação de ponto. Ele utiliza a biblioteca `requests` para enviar requisições POST, e `smtplib` para enviar e-mails de notificação. Além disso, verifica se o dia atual é um feriado ou final de semana usando a biblioteca `holidays`.
 
-## Dependências
+## Dependências:
 
 - `requests`: para realizar as requisições HTTP para o serviço de marcação de ponto.
 - `datetime`: para trabalhar com datas e horários.
@@ -10,7 +10,7 @@ Este script foi desenvolvido em Python para automatizar a marcação de ponto. E
 - `smtplib` e `email.mime.text.MIMEText`: para enviar e-mails.
 - `holidays`: para verificar se uma data é um feriado.
 
-## Principais Funcionalidades
+## Principais Funcionalidades:
 
 1. **Geração de horários aleatórios**: O script gera horários aleatórios para entrada, saída para almoço, retorno do almoço e saída do trabalho. Esses horários são gerados dentro de um intervalo de tempo específico para cada evento.
 2. **Validação do dia**: Antes de fazer a marcação, o script verifica se o dia atual é um dia útil (não é um final de semana ou feriado).
@@ -19,7 +19,7 @@ Este script foi desenvolvido em Python para automatizar a marcação de ponto. E
 5. **Registro das marcações de ponto**: O script grava cada marcação de ponto em um arquivo de texto (`pontos.txt`). O arquivo contém a data, o horário e o tipo de cada marcação de ponto.
 
 
-## Uso
+## Uso:
 
 Para usar o script, você deve configurar os seguintes parâmetros:
 
