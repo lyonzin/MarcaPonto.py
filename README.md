@@ -4,32 +4,33 @@ Este script foi desenvolvido em Python para automatizar a marcação de ponto. E
 
 ## Dependências
 
-- requests
-- datetime
-- holidays
-- random
-- smtplib
-- email.mime.text
+- `requests`: para realizar as requisições HTTP para o serviço de marcação de ponto.
+- `datetime`: para trabalhar com datas e horários.
+- `random`: para gerar horários aleatórios.
+- `smtplib` e `email.mime.text.MIMEText`: para enviar e-mails.
+- `holidays`: para verificar se uma data é um feriado.
 
-## Funcionalidades
+## Principais Funcionalidades
 
-1. Verifica se o dia atual é um feriado ou final de semana.
-2. Gera horários aleatórios para a marcação de ponto.
-3. Envia a requisição POST para a URL fornecida.
-4. Envia um e-mail de notificação com o resultado da marcação de ponto.
+1. **Geração de horários aleatórios**: O script gera horários aleatórios para entrada, saída para almoço, retorno do almoço e saída do trabalho. Esses horários são gerados dentro de um intervalo de tempo específico para cada evento.
+2. **Validação do dia**: Antes de fazer a marcação, o script verifica se o dia atual é um dia útil (não é um final de semana ou feriado).
+3. **Envio de e-mails**: O script envia um e-mail após a realização de cada marcação de ponto, informando o tipo de marcação (entrada, saída para almoço, retorno do almoço, saída) e o horário da marcação.
+4. **Verificação de marcações de ponto já realizadas**: Antes de cada marcação, o script verifica se a marcação já foi realizada para evitar marcações duplicadas.
+5. **Registro das marcações de ponto**: O script grava cada marcação de ponto em um arquivo de texto (`pontos.txt`). O arquivo contém a data, o horário e o tipo de cada marcação de ponto.
+
 
 ## Uso
 
-Antes de executar o script, é necessário preencher as seguintes informações:
+Para usar o script, você deve configurar os seguintes parâmetros:
 
-- SEU_EMAIL: Insira seu endereço de e-mail.
-- E-MAIL DE DESTINO: Insira o endereço de e-mail de destino para receber notificações.
-- SUA SENHA: Insira a senha do seu e-mail.
-- SEU LOGIN: Insira o login para acessar o sistema de marcação de ponto.
+- As credenciais do seu e-mail na função `send_email()`.
+- As credenciais para o serviço de marcação de ponto na função `main()` (no objeto `payload`).
+- Os intervalos de tempo para a geração de horários aleatórios na função `main()`.
 
-Após preencher as informações, execute o script em um ambiente Python com as bibliotecas necessárias instaladas. Ele irá verificar se o dia atual é válido para marcação de ponto e, em caso positivo, realizará a marcação e enviará um e-mail de notificação.
+Depois disso, basta executar o script. Ele fará a marcação de ponto automaticamente e enviará um e-mail para você com os detalhes de cada marcação.
 
-## Notas
+**##Nota**: 
 
+- Certifique-se de ter todas as dependências instaladas no seu ambiente Python. Você pode instalá-las usando o comando `pip install <nome da biblioteca>`.
 - Este script foi projetado para funcionar com o servidor SMTP da Microsoft. Se você estiver usando outro provedor de e-mail, pode ser necessário modificar as configurações de SMTP.
-- Certifique-se de que as informações fornecidas estejam corretas e que você tenha permissão para acessar o sistema de marcação de ponto. 
+- Certifique-se de que as informações fornecidas estejam corretas e que você tenha permissão para acessar o sistema de marcação de ponto.
