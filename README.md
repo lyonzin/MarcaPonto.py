@@ -29,7 +29,7 @@ Para usar o script, você deve configurar os seguintes parâmetros:
 
 Depois disso, basta executar o script. Ele fará a marcação de ponto automaticamente e enviará um e-mail para você com os detalhes de cada marcação.
 
-**Nota**: 
+##Nota: 
 
 - Certifique-se de ter todas as dependências instaladas no seu ambiente Python. Você pode instalá-las usando o comando `pip install <nome da biblioteca>`.
 - Este script foi projetado para funcionar com o servidor SMTP da Microsoft. Se você estiver usando outro provedor de e-mail, pode ser necessário modificar as configurações de SMTP.
