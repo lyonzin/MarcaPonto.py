@@ -85,7 +85,7 @@ def is_valid_day(today, holidays_br, holidays_global):
         return False, 'Hoje é feriado, não é possível marcar ponto!'
     return True, ''
 
-#Randomizador de tempo
+# Função do mexidão (Randomizador) :)
 def generate_random_time(today, min_time, max_time):
     min_time_delta = datetime.timedelta(hours=min_time.hour, minutes=min_time.minute)
     max_time_delta = datetime.timedelta(hours=max_time.hour, minutes=max_time.minute)
@@ -108,7 +108,7 @@ def check_previous_point(today, point_type):
                 return True
     return False
 
-#Registra uma marcação de ponto no arquivo de registro
+#Registra uma marcação de ponto no arquivo de registro :)
 def record_point(today, time, point_type):
     date_str = today.strftime("%Y-%m-%d")
     time_str = time.strftime("%H:%M:%S")
@@ -127,27 +127,36 @@ current_day = None
 #Função Principal onde chamado tudooo
 def main():
     
-    # move a declaração de 'today' para dentro da função 'main'
     today = datetime.datetime.today()
-
+    
+    # Verificando se os arquivos "pontos.txt" e "horarios.txt" Existe :)
     ensure_file_exists("pontos.txt")
     ensure_file_exists("horarios.txt")
-    # Mantém apenas as entradas de ponto do dia atual no arquivo "pontos.txt"
+    
+    # Mantém apenas as entradas de ponto do dia atual no arquivo "pontos.txt" :)
     ensure_current_day_log_file(today)
         
-    #Definindo em qual horario o script pode rodar.
+    #Definindo em qual horario o script pode rodar.:)
     execution_start_time = datetime.time(8, 55)
     execution_end_time = datetime.time(18, 10)
-        
+     
+    #Definindo horario min e max para entrada.    :)
     horario_entrada_min = datetime.time(8, 55)
     horario_entrada_max = datetime.time(9, 10)
+    
+    #Definindo horario min e max para saida do Almoço.    :) 
     horario_saida_almoco_min = datetime.time(12, 0)
     horario_saida_almoco_max = datetime.time(12, 20)
+    
+    #Definindo horario min e max para retorno do Almoço.    :)
     horario_retorno_almoco_min = datetime.time(13, 0)
     horario_retorno_almoco_max = datetime.time(13, 15)
+    
+    #Definindo horario min e max para saida (termino do trabalho).    :)
     horario_saida_min = datetime.time(18, 0)
     horario_saida_max = datetime.time(18, 10)
     
+    #Gerando um horario aleatorio para marcar o ponto respeitando os horario min e max de cada etapa.   :)
     horario_entrada = generate_random_time(today, horario_entrada_min, horario_entrada_max)
     horario_saida_almoco = generate_random_time(today, horario_saida_almoco_min, horario_saida_almoco_max)
     horario_retorno_almoco = generate_random_time(today, horario_retorno_almoco_min, horario_retorno_almoco_max)
@@ -160,7 +169,7 @@ def main():
     holidays_br = holidays.Brazil(years=current_year)
     holidays_global = holidays.CountryHoliday('BR', years=current_year)
     
-    global current_day  # Isso é necessário para modificar a variável global dentro desta função
+    global current_day  # Isso é necessário para modificar a variável global dentro desta função :)
     
     url = 'https://cliente.apdata.com.br/everisparceiro/.net/index.ashx/SaveTimmingEvent'
     
@@ -207,7 +216,7 @@ def main():
         'Cookie': 'X-Oracle-BMC-LBS-Route=bb089166a4d059141e589f5733aa94f02d71e92b; clockDeviceToken8001=nH6C/qScdsJSxp4tyTbzcGMegpWY8nGrKJ7+ZjgmX3xHmIA=; acceptedRequiredCookies=COOKIEACCEPTED; acceptedOptionalCookies=COOKIEACCEPTED; Aplanguage=0; FIN_COOKIE=true; apdataCookieIsEnabled=none; __zjc7220=5264592017; __z_a=1442784464723815612723815; authenticated=false; SessionID=; dynSID=; ts=; loginOK=false; dashPublicImg=dpi; X-Oracle-BMC-LBS-Realm=1'
     }
         
-# Se estamos em um novo dia ou ainda não foram gerados horários
+# Verifica se estamos em um novo dia ou ainda não foram gerados horários
     if today.day != current_day or not os.path.exists("horarios.txt"):
         current_day = today.day
         # Gerar novos horários aleatórios
@@ -221,7 +230,7 @@ def main():
                 random_time = generate_random_time(today, min_time, max_time)
                 file.write(f"{point_type},{random_time.hour}:{random_time.minute}:{random_time.second}\n")
     
-    # é Aqui que eu valido se é feriado ou fim de semana
+    # é Aqui que eu valido se é feriado ou fim de semana. :)
     valid, reason = is_valid_day(today, holidays_br, holidays_global)
     if not valid:
         print(reason)
